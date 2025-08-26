@@ -1,6 +1,7 @@
 'use client';
 
 import { Edit, Plus } from 'lucide-react';
+import { useRef, useEffect } from 'react';
 
 interface Meal {
   id: string;
@@ -17,7 +18,7 @@ interface MealModalProps {
     name: string;
     type: Meal['type'];
     date: string;
-    notes: string;
+    recipe: string;
   };
   onClose: () => void;
   onSave: () => void;
@@ -32,12 +33,21 @@ export default function MealModal({
   onSave,
   onFormChange
 }: MealModalProps) {
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  
   const mealTypes = [
     { value: 'breakfast', label: 'Kahvaltı', icon: '🌅' },
     { value: 'lunch', label: 'Öğle Yemeği', icon: '☀️' },
     { value: 'dinner', label: 'Akşam Yemeği', icon: '🌙' },
     { value: 'snack', label: 'Ara Öğün', icon: '🍎' }
   ];
+
+  // Modal açıldığında yemek ismi alanına odaklan
+  useEffect(() => {
+    if (showModal && nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
+  }, [showModal]);
 
   if (!showModal) return null;
 
@@ -54,6 +64,7 @@ export default function MealModal({
               Yemek Adı
             </label>
             <input
+              ref={nameInputRef}
               type="text"
               value={formData.name}
               onChange={(e) => onFormChange('name', e.target.value)}
@@ -93,16 +104,18 @@ export default function MealModal({
 
           <div>
             <label className="block text-sm font-medium text-black mb-1">
-              Notlar (İsteğe bağlı)
+              Tarif (İsteğe bağlı)
             </label>
             <textarea
-              value={formData.notes}
-              onChange={(e) => onFormChange('notes', e.target.value)}
+              value={formData.recipe}
+              onChange={(e) => onFormChange('recipe', e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-black"
-              rows={3}
-              placeholder="Örn: Vejetaryen, gluten içermez..."
+              rows={4}
+              placeholder="Yemeğin tarifini buraya yazabilirsiniz..."
             />
           </div>
+
+
         </div>
 
         <div className="flex gap-3 mt-6">
