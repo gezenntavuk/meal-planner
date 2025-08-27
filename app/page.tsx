@@ -207,8 +207,7 @@ export default function MealPlanner() {
       name: meal.name,
       type: meal.type,
       date: meal.date,
-      recipe: meal.recipe || '',
-      branches: meal.branches || []
+      recipe: meal.recipe || ''
     });
     setShowAddModal(true);
   };
