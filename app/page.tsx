@@ -34,6 +34,9 @@ export default function MealPlanner() {
   // Convex hooks
   const meals = useQuery(api.meals.getAll) || [];
   const recipes = useQuery(api.recipes.getAll) || [];
+  
+
+
   const createMeal = useMutation(api.meals.create);
   const updateMeal = useMutation(api.meals.update);
   const deleteMeal = useMutation(api.meals.remove);
@@ -41,6 +44,7 @@ export default function MealPlanner() {
   const updateRecipe = useMutation(api.recipes.update);
   const deleteRecipe = useMutation(api.recipes.remove);
   const toggleFavorite = useMutation(api.recipes.toggleFavorite);
+
   
   // Seed fonksiyonları kaldırıldı
 
@@ -66,6 +70,10 @@ export default function MealPlanner() {
   const [breakfastSearch, setBreakfastSearch] = useState('');
   const [mainSearch, setMainSearch] = useState('');
   const [snackSearch, setSnackSearch] = useState('');
+  
+
+  
+
 
   // Haftalık günleri oluştur
   const weekDays = Array.from({ length: 7 }, (_, i) => {
@@ -169,15 +177,15 @@ export default function MealPlanner() {
     // Yukarıdaki aynı isimli yemekleri de güncelle
     const matchingMeals = meals.filter(meal => meal.name === oldRecipeName);
     for (const meal of matchingMeals) {
-      await updateMeal({
-        id: meal._id,
-        name: newRecipeName,
-        type: formData.type,
-        date: meal.date,
-        notes: meal.notes,
-        order: meal.order,
-        recipe: formData.recipe
-      });
+              await updateMeal({
+          id: meal._id,
+          name: newRecipeName,
+          type: formData.type,
+          date: meal.date,
+          notes: meal.notes,
+          order: meal.order,
+          recipe: formData.recipe
+        });
     }
     
     setEditingRecipe(null);
@@ -199,7 +207,8 @@ export default function MealPlanner() {
       name: meal.name,
       type: meal.type,
       date: meal.date,
-      recipe: meal.recipe || ''
+      recipe: meal.recipe || '',
+      branches: meal.branches || []
     });
     setShowAddModal(true);
   };
@@ -276,12 +285,24 @@ export default function MealPlanner() {
     return mealTypes.find(t => t.value === type);
   };
 
-  // Tarifleri alfabetik sırala (favorite özelliği Convex'te yok)
+  // Tarifleri sırala - favoriler önce, sonra alfabetik
   const getSortedRecipes = () => {
     return recipes.sort((a, b) => {
+      // Önce favori durumuna göre sırala (favoriler önce)
+      if (a.favorite && !b.favorite) return -1;
+      if (!a.favorite && b.favorite) return 1;
+      
+      // Favori durumu aynıysa alfabetik sırala
       return a.name.localeCompare(b.name);
     });
   };
+
+  // Tarif filtreleme fonksiyonu
+  const getFilteredRecipes = (type: 'breakfast' | 'main' | 'snack') => {
+    return getSortedRecipes().filter(recipe => recipe.type === type);
+  };
+
+
 
 
 
@@ -351,32 +372,33 @@ export default function MealPlanner() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-3">
-            <Utensils className="text-green-600" />
-            Haftalık Yemek Planlayıcısı
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2 sm:gap-3">
+            <Utensils className="text-green-600 w-6 h-6 sm:w-8 sm:h-8" />
+            <span className="hidden sm:inline">Haftalık Yemek Planlayıcısı</span>
+            <span className="sm:hidden">Yemek Planlayıcısı</span>
           </h1>
-          <p className="text-gray-600">Bu hafta hangi yemekleri yiyeceğinizi planlayın</p>
+          <p className="text-sm sm:text-base text-gray-600">Bu hafta hangi yemekleri yiyeceğinizi planlayın</p>
           
 
         </div>
 
         {/* Week Navigation */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 gap-2 sm:gap-0">
           <button
             onClick={() => setCurrentWeek(addDays(currentWeek, -7))}
-            className="px-4 py-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow text-black cursor-pointer"
+            className="px-3 sm:px-4 py-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow text-black cursor-pointer text-sm sm:text-base"
           >
             ← Önceki Hafta
           </button>
-          <div className="text-lg font-semibold text-gray-700">
+          <div className="text-sm sm:text-lg font-semibold text-gray-700 text-center">
             {format(startOfWeek(currentWeek, { weekStartsOn: 1 }), 'd MMMM yyyy', { locale: tr })} - {format(addDays(startOfWeek(currentWeek, { weekStartsOn: 1 }), 6), 'd MMMM yyyy', { locale: tr })}
           </div>
           <button
             onClick={() => setCurrentWeek(addDays(currentWeek, 7))}
-            className="px-4 py-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow text-black cursor-pointer"
+            className="px-3 sm:px-4 py-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow text-black cursor-pointer text-sm sm:text-base"
           >
             Sonraki Hafta →
           </button>
@@ -385,13 +407,13 @@ export default function MealPlanner() {
 
 
         {/* Weekly Calendar */}
-        <div className="grid grid-cols-7 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2 sm:gap-4">
           {weekDays.map((day) => {
             const isToday = day.fullDate === format(new Date(), 'yyyy-MM-dd');
             return (
               <div 
                 key={day.fullDate} 
-                className={`rounded-lg shadow-md p-4 transition-all duration-200 ${
+                className={`rounded-lg shadow-md p-2 sm:p-4 transition-all duration-200 ${
                   isToday 
                     ? 'bg-gradient-to-br from-green-100 to-blue-100 border-2 border-green-400 shadow-lg' 
                     : 'bg-white'
@@ -399,8 +421,8 @@ export default function MealPlanner() {
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, day.fullDate)}
               >
-                <div className="text-center mb-3">
-                  <div className={`text-sm ${isToday ? 'text-green-700 font-medium' : 'text-black'} relative`}>
+                <div className="text-center mb-2 sm:mb-3">
+                  <div className={`text-xs sm:text-sm ${isToday ? 'text-green-700 font-medium' : 'text-black'} relative`}>
                     <div className="text-center">{day.formatted}</div>
                     <button
                       onClick={() => openAddModalForDay(day.fullDate)}
@@ -410,13 +432,13 @@ export default function MealPlanner() {
                       <Plus size={12} />
                     </button>
                   </div>
-                  <div className={`text-lg font-semibold ${isToday ? 'text-green-800' : 'text-black'}`}>
+                  <div className={`text-base sm:text-lg font-semibold ${isToday ? 'text-green-800' : 'text-black'}`}>
                     {day.shortDate}
-                    {isToday && <span className="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full">Bugün</span>}
+                    {isToday && <span className="ml-1 sm:ml-2 text-xs bg-green-500 text-white px-1 sm:px-2 py-1 rounded-full">Bugün</span>}
                   </div>
                 </div>
               
-              <div className="space-y-2 min-h-[100px]">
+              <div className="space-y-1 sm:space-y-2 min-h-[80px] sm:min-h-[100px]">
                 {getMealsForDay(day.fullDate).map((meal) => {
                   const typeInfo = getMealTypeInfo(meal.type);
                   const isDragging = draggedMeal?._id === meal._id;
@@ -424,7 +446,7 @@ export default function MealPlanner() {
                     <div 
                       key={meal._id} 
                       data-meal-id={meal._id}
-                      className={`rounded-lg p-3 cursor-move transition-all duration-200 ${
+                      className={`rounded-lg p-2 sm:p-3 cursor-move transition-all duration-200 ${
                         isToday ? 'bg-green-50 border border-green-200' : 'bg-gray-50'
                       } ${
                         isDragging ? 'opacity-50 scale-95' : 'hover:shadow-md'
@@ -433,10 +455,10 @@ export default function MealPlanner() {
                       onDragStart={(e) => handleDragStart(e, meal)}
                       onDragEnd={handleDragEnd}
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg">{typeInfo?.icon}</span>
-                          <span className="text-sm font-medium text-gray-700">{typeInfo?.label}</span>
+                      <div className="flex items-center justify-between mb-1 sm:mb-2">
+                        <div className="flex items-center gap-1 sm:gap-2">
+                          <span className="text-base sm:text-lg">{typeInfo?.icon}</span>
+                          <span className="text-xs sm:text-sm font-medium text-gray-700">{typeInfo?.label}</span>
                         </div>
                         <div className="flex gap-1">
                           <button
@@ -459,7 +481,7 @@ export default function MealPlanner() {
                           </button>
                         </div>
                       </div>
-                      <div className="font-medium text-sm text-black flex items-center gap-2">
+                      <div className="font-medium text-xs sm:text-sm text-black flex items-center gap-1 sm:gap-2">
                         {capitalizeWords(meal.name)}
                         {meal.recipe && (
                           <button
@@ -482,12 +504,13 @@ export default function MealPlanner() {
                           </button>
                         )}
                       </div>
+
                     </div>
                   );
                 })}
                 {getMealsForDay(day.fullDate).length === 0 && (
                   <div 
-                    className="text-center text-gray-400 text-sm py-8 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 hover:text-gray-600 transition-colors"
+                    className="text-center text-gray-400 text-xs sm:text-sm py-4 sm:py-8 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 hover:text-gray-600 transition-colors"
                     onClick={() => openAddModalForDay(day.fullDate)}
                     title={`${day.formatted} gününe yemek ekle`}
                   >
@@ -501,15 +524,15 @@ export default function MealPlanner() {
         </div>
 
         {/* Tüm Tariflerim Bölümü */}
-        <div className="mt-12">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">
+        <div className="mt-8 sm:mt-12">
+          <div className="text-center mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
               📚 Tüm Tariflerim
             </h2>
           </div>
           
           <div 
-            className={`grid grid-cols-1 lg:grid-cols-3 gap-6 transition-all duration-200 ${
+            className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 transition-all duration-200 ${
               isDraggingToRecipes ? 'bg-red-50 border-2 border-red-200 rounded-lg p-2' : ''
             }`}
             onDragOver={(e) => {
@@ -531,11 +554,11 @@ export default function MealPlanner() {
             }}
           >
             {/* Kahvaltı Kolonu */}
-            <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">🌅</span>
-                  <h3 className="text-lg font-semibold text-orange-800">Kahvaltı</h3>
+            <div className="bg-orange-50 rounded-lg p-3 sm:p-4 border border-orange-200">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <span className="text-xl sm:text-2xl">🌅</span>
+                  <h3 className="text-base sm:text-lg font-semibold text-orange-800">Kahvaltı</h3>
                 </div>
                 <button
                   onClick={() => {
@@ -544,13 +567,13 @@ export default function MealPlanner() {
                     setFormData({ name: '', type: 'breakfast', date: '', recipe: '' });
                     setShowAddModal(true);
                   }}
-                  className="px-3 py-1 bg-orange-600 text-white rounded-lg shadow-md hover:bg-orange-700 transition-colors flex items-center gap-1 text-sm cursor-pointer"
+                  className="px-2 sm:px-3 py-1 bg-orange-600 text-white rounded-lg shadow-md hover:bg-orange-700 transition-colors flex items-center gap-1 text-xs sm:text-sm cursor-pointer"
                 >
                   <Plus size={12} />
                   Ekle
                 </button>
               </div>
-              <div className="mb-4">
+              <div className="mb-3 sm:mb-4">
                 <input
                   type="text"
                   placeholder="Kahvaltı tariflerinde ara..."
@@ -567,7 +590,7 @@ export default function MealPlanner() {
                       setBreakfastSearch('');
                     }
                   }}
-                  className="w-full px-3 py-2 border border-orange-300 rounded-lg text-sm text-gray-800 placeholder-gray-500 focus:border-2 focus:border-orange-500 focus:outline-none"
+                  className="w-full px-2 sm:px-3 py-2 border border-orange-300 rounded-lg text-xs sm:text-sm text-gray-800 placeholder-gray-500 focus:border-2 focus:border-orange-500 focus:outline-none"
                 />
                 {breakfastSearch.trim().length > 0 && !recipes.some(recipe => recipe.name.toLowerCase() === breakfastSearch.trim().toLowerCase()) && (
                   <button
@@ -579,16 +602,17 @@ export default function MealPlanner() {
                       setShowAddModal(true);
                       setBreakfastSearch('');
                     }}
-                    className="mt-2 w-full px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors cursor-pointer flex items-center justify-center gap-2 text-sm"
+                    className="mt-2 w-full px-2 sm:px-3 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors cursor-pointer flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm"
                   >
                     <Plus size={14} />
                     "{breakfastSearch.trim()}" olarak yeni tarif ekle
                   </button>
                 )}
+                
+
               </div>
-                              <div className="grid grid-cols-2 gap-3">
-                {getSortedRecipes()
-                  .filter(recipe => recipe.type === 'breakfast')
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                {getFilteredRecipes('breakfast')
                   .filter(recipe => 
                     breakfastSearch === '' || 
                     recipe.name.toLowerCase().includes(breakfastSearch.toLowerCase())
@@ -598,7 +622,11 @@ export default function MealPlanner() {
                     return (
                       <div
                         key={recipe._id}
-                        className="bg-white rounded-lg shadow-md p-3 cursor-move hover:shadow-lg transition-shadow border border-orange-200"
+                        className={`rounded-lg shadow-md p-2 sm:p-3 cursor-move hover:shadow-lg transition-shadow border ${
+                          recipe.favorite 
+                            ? 'bg-red-50 border-red-300 shadow-lg' 
+                            : 'bg-white border-orange-200'
+                        }`}
                         draggable
                         onDragStart={(e) => {
                           const newMeal = {
@@ -668,6 +696,7 @@ export default function MealPlanner() {
                         <div className="text-xs text-gray-500">
                           {recipe.recipe ? 'Tarif mevcut' : 'Tarif yok'}
                         </div>
+
                       </div>
                     );
                   })}
@@ -675,11 +704,11 @@ export default function MealPlanner() {
             </div>
 
             {/* Ana Yemek Kolonu */}
-            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">🍽️</span>
-                  <h3 className="text-lg font-semibold text-green-800">Ana Yemek</h3>
+            <div className="bg-green-50 rounded-lg p-3 sm:p-4 border border-green-200">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <span className="text-xl sm:text-2xl">🍽️</span>
+                  <h3 className="text-base sm:text-lg font-semibold text-green-800">Ana Yemek</h3>
                 </div>
                 <button
                   onClick={() => {
@@ -688,13 +717,13 @@ export default function MealPlanner() {
                     setFormData({ name: '', type: 'main', date: '', recipe: '' });
                     setShowAddModal(true);
                   }}
-                  className="px-3 py-1 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-colors flex items-center gap-1 text-sm cursor-pointer"
+                  className="px-2 sm:px-3 py-1 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition-colors flex items-center gap-1 text-xs sm:text-sm cursor-pointer"
                 >
                   <Plus size={12} />
                   Ekle
                 </button>
               </div>
-              <div className="mb-4">
+              <div className="mb-3 sm:mb-4">
                 <input
                   type="text"
                   placeholder="Ana yemek tariflerinde ara..."
@@ -711,7 +740,7 @@ export default function MealPlanner() {
                       setMainSearch('');
                     }
                   }}
-                  className="w-full px-3 py-2 border border-green-300 rounded-lg text-sm text-gray-800 placeholder-gray-500 focus:border-2 focus:border-green-500 focus:outline-none"
+                  className="w-full px-2 sm:px-3 py-2 border border-green-300 rounded-lg text-xs sm:text-sm text-gray-800 placeholder-gray-500 focus:border-2 focus:border-green-500 focus:outline-none"
                 />
                 {mainSearch.trim().length > 0 && !recipes.some(recipe => recipe.name.toLowerCase() === mainSearch.trim().toLowerCase()) && (
                   <button
@@ -723,16 +752,17 @@ export default function MealPlanner() {
                       setShowAddModal(true);
                       setMainSearch('');
                     }}
-                    className="mt-2 w-full px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer flex items-center justify-center gap-2 text-sm"
+                    className="mt-2 w-full px-2 sm:px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors cursor-pointer flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm"
                   >
                     <Plus size={14} />
                     "{mainSearch.trim()}" olarak yeni tarif ekle
                   </button>
                 )}
+                
+
               </div>
-                              <div className="grid grid-cols-2 gap-3">
-                {getSortedRecipes()
-                  .filter(recipe => recipe.type === 'main')
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                {getFilteredRecipes('main')
                   .filter(recipe => 
                     mainSearch === '' || 
                     recipe.name.toLowerCase().includes(mainSearch.toLowerCase())
@@ -742,7 +772,11 @@ export default function MealPlanner() {
                     return (
                       <div
                         key={recipe._id}
-                        className="bg-white rounded-lg shadow-md p-3 cursor-move hover:shadow-lg transition-shadow border border-green-200"
+                        className={`rounded-lg shadow-md p-2 sm:p-3 cursor-move hover:shadow-lg transition-shadow border ${
+                          recipe.favorite 
+                            ? 'bg-red-50 border-red-300 shadow-lg' 
+                            : 'bg-white border-green-200'
+                        }`}
                         draggable
                         onDragStart={(e) => {
                           const newMeal = {
@@ -812,6 +846,7 @@ export default function MealPlanner() {
                         <div className="text-xs text-gray-500">
                           {recipe.recipe ? 'Tarif mevcut' : 'Tarif yok'}
                         </div>
+
                       </div>
                     );
                   })}
@@ -819,11 +854,11 @@ export default function MealPlanner() {
             </div>
 
             {/* Ara Öğün Kolonu */}
-            <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl">🍎</span>
-                  <h3 className="text-lg font-semibold text-purple-800">Ara Öğün</h3>
+            <div className="bg-purple-50 rounded-lg p-3 sm:p-4 border border-purple-200">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <span className="text-xl sm:text-2xl">🍎</span>
+                  <h3 className="text-base sm:text-lg font-semibold text-purple-800">Ara Öğün</h3>
                 </div>
                 <button
                   onClick={() => {
@@ -832,13 +867,13 @@ export default function MealPlanner() {
                     setFormData({ name: '', type: 'snack', date: '', recipe: '' });
                     setShowAddModal(true);
                   }}
-                  className="px-3 py-1 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors flex items-center gap-1 text-sm cursor-pointer"
+                  className="px-2 sm:px-3 py-1 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition-colors flex items-center gap-1 text-xs sm:text-sm cursor-pointer"
                 >
                   <Plus size={12} />
                   Ekle
                 </button>
               </div>
-              <div className="mb-4">
+              <div className="mb-3 sm:mb-4">
                 <input
                   type="text"
                   placeholder="Ara öğün tariflerinde ara..."
@@ -855,7 +890,7 @@ export default function MealPlanner() {
                       setSnackSearch('');
                     }
                   }}
-                  className="w-full px-3 py-2 border border-purple-300 rounded-lg text-sm text-gray-800 placeholder-gray-500 focus:border-2 focus:border-purple-500 focus:outline-none"
+                  className="w-full px-2 sm:px-3 py-2 border border-purple-300 rounded-lg text-xs sm:text-sm text-gray-800 placeholder-gray-500 focus:border-2 focus:border-purple-500 focus:outline-none"
                 />
                 {snackSearch.trim().length > 0 && !recipes.some(recipe => recipe.name.toLowerCase() === snackSearch.trim().toLowerCase()) && (
                   <button
@@ -867,16 +902,17 @@ export default function MealPlanner() {
                       setShowAddModal(true);
                       setSnackSearch('');
                     }}
-                    className="mt-2 w-full px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors cursor-pointer flex items-center justify-center gap-2 text-sm"
+                    className="mt-2 w-full px-2 sm:px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors cursor-pointer flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm"
                   >
                     <Plus size={14} />
                     "{snackSearch.trim()}" olarak yeni tarif ekle
                   </button>
                 )}
+                
+
               </div>
-                              <div className="grid grid-cols-2 gap-3">
-                {getSortedRecipes()
-                  .filter(recipe => recipe.type === 'snack')
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                {getFilteredRecipes('snack')
                   .filter(recipe => 
                     snackSearch === '' || 
                     recipe.name.toLowerCase().includes(snackSearch.toLowerCase())
@@ -886,7 +922,11 @@ export default function MealPlanner() {
                     return (
                       <div
                         key={recipe._id}
-                        className="bg-white rounded-lg shadow-md p-3 cursor-move hover:shadow-lg transition-shadow border border-purple-200"
+                        className={`rounded-lg shadow-md p-2 sm:p-3 cursor-move hover:shadow-lg transition-shadow border ${
+                          recipe.favorite 
+                            ? 'bg-red-50 border-red-300 shadow-lg' 
+                            : 'bg-white border-purple-200'
+                        }`}
                         draggable
                         onDragStart={(e) => {
                           const newMeal = {
@@ -956,6 +996,7 @@ export default function MealPlanner() {
                         <div className="text-xs text-gray-500">
                           {recipe.recipe ? 'Tarif mevcut' : 'Tarif yok'}
                         </div>
+
                       </div>
                     );
                   })}

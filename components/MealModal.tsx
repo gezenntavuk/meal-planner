@@ -1,7 +1,7 @@
 'use client';
 
 import { Edit, Plus } from 'lucide-react';
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
 
 import { Id } from '../convex/_generated/dataModel';
 
@@ -38,6 +38,7 @@ export default function MealModal({
   onFormChange
 }: MealModalProps) {
   const nameInputRef = useRef<HTMLInputElement>(null);
+
   
   const mealTypes = [
     { value: 'breakfast', label: 'Kahvaltı', icon: '🌅' },
@@ -84,13 +85,13 @@ export default function MealModal({
   if (!showModal) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-semibold mb-4 text-black">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50">
+      <div className="bg-white rounded-lg p-4 sm:p-6 w-full max-w-md mx-2">
+        <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-black">
           {editingMeal ? 'Yemek Düzenle' : 'Yeni Yemek Ekle'}
         </h2>
         
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <div>
             <label className="block text-sm font-medium text-black mb-1">
               Yemek Adı
@@ -163,9 +164,10 @@ export default function MealModal({
           </div>
 
 
+
         </div>
 
-        <div className="flex gap-3 mt-6">
+        <div className="flex gap-2 sm:gap-3 mt-4 sm:mt-6">
           <button
             onClick={onClose}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-black cursor-pointer transition-colors"
