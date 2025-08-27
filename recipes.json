@@ -1,0 +1,605 @@
+[
+    {
+        "id": "1756222624804",
+        "name": "ekşili yumurta",
+        "type": "breakfast",
+        "recipe": "",
+        "favorite": true
+    },
+    {
+        "id": "1756213192848",
+        "name": "Haşlanmış Yumurta",
+        "type": "breakfast",
+        "recipe": "",
+        "favorite": true
+    },
+    {
+        "id": "1756213217409",
+        "name": "Omlet",
+        "type": "breakfast",
+        "recipe": "",
+        "favorite": true
+    },
+    {
+        "id": "1756223121128",
+        "name": "adana kebabı",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222369793",
+        "name": "ali nazik kebabı",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756214629367",
+        "name": "Ay poğaça",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756213158288",
+        "name": "Bazlama",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756223127641",
+        "name": "beyti kebabı",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223523302",
+        "name": "brokoli karnabahar kızartma",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223299190",
+        "name": "bulgur pilavı",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223439890",
+        "name": "cacık",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223331465",
+        "name": "chees burger",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223420027",
+        "name": "ciğer",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756213168677",
+        "name": "Çibörek",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756223378840",
+        "name": "çiğ köfte",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223445315",
+        "name": "çoban salata",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756236867414",
+        "name": "çokotop",
+        "type": "snack",
+        "recipe": ""
+    },
+    {
+        "id": "1756222414267",
+        "name": "dolma",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756237152488",
+        "name": "domates biber",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756222823552",
+        "name": "domatesli pilav",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223508527",
+        "name": "dometes çorbası",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223472440",
+        "name": "ekşili ezogelin",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223328215",
+        "name": "et burger",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756237013176",
+        "name": "et güveç",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222524104",
+        "name": "et tantuni",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222782353",
+        "name": "etli ekmek",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223459715",
+        "name": "ezogelin",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222721329",
+        "name": "fajita",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223638552",
+        "name": "falafel",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223382915",
+        "name": "fellah köfte",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222582279",
+        "name": "fırın tavuk",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "recipe_1756211812110_0.3696662678160222",
+        "name": "Fırında Patates",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756213132436",
+        "name": "Gözleme",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756223259790",
+        "name": "havuçlu pilav",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222381853",
+        "name": "hünkar beğendi",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223242428",
+        "name": "iç pilav",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223386790",
+        "name": "içli köfte",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222362605",
+        "name": "imam bayıldı",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223371952",
+        "name": "inegöl köfte",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223136203",
+        "name": "iskender",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223511565",
+        "name": "kabak tarator",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756213452529",
+        "name": "Karışık Kızartma",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756222161105",
+        "name": "karnıyarık",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223452902",
+        "name": "kış salatası",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756237029964",
+        "name": "kıymalı makarna",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223361515",
+        "name": "köfte kızartma",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223306890",
+        "name": "kreamlı makarna",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756213145196",
+        "name": "Krep",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756222511179",
+        "name": "kuru dolma",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756213583333",
+        "name": "Kuru Fasulye",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223149228",
+        "name": "lahmacun",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223316103",
+        "name": "lazanya",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223335478",
+        "name": "mantı",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756213109899",
+        "name": "menemen",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756223437352",
+        "name": "mercimek çorbası",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222140929",
+        "name": "mercimek köftesi",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222134267",
+        "name": "mercimek yemeği",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223449315",
+        "name": "mevsim salata",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223428478",
+        "name": "mumbar",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222152730",
+        "name": "musakka",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223629789",
+        "name": "mücver",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756213617181",
+        "name": "Nohut Yemeği",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756213371009",
+        "name": "Paçanga Böreği",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756213401857",
+        "name": "Pancake",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756214363666",
+        "name": "Patates Kızartması",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756213495885",
+        "name": "Patates Köftesi",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756222409467",
+        "name": "Patates oturtma",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223240553",
+        "name": "patates rulo",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223680627",
+        "name": "patates salatası",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223568027",
+        "name": "patlıcan kebabı",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223141941",
+        "name": "pide",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223294028",
+        "name": "pirinç pilavı",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756213126645",
+        "name": "Pişi",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756213328545",
+        "name": "Pizza",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223280928",
+        "name": "sade makarna",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "recipe_1756211812110_0.0729887692814648",
+        "name": "sarma",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756213246625",
+        "name": "Sebzeli Omlet",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756223671227",
+        "name": "sezar salata",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756213353316",
+        "name": "Sigara Böreği",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756213253937",
+        "name": "Simit Poğaça",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "recipe_1756212024668_0.07696664037305045",
+        "name": "sucuk",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756213207121",
+        "name": "Sucuklu Yumurta",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756223495727",
+        "name": "tarhana çorbası",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223163303",
+        "name": "tarhana et suyu",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223548002",
+        "name": "tava",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223326090",
+        "name": "tavuk burger",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223115140",
+        "name": "tavuk dürüm",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222763128",
+        "name": "Tavuk güveç",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222716366",
+        "name": "Tavuk sote",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222528479",
+        "name": "tavuk tantuni",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756222731191",
+        "name": "tavuklu pilav",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223595015",
+        "name": "taze fasulye",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223555189",
+        "name": "tepsi kebabı",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "recipe_1756212018306_0.09476252864037704",
+        "name": "Tost",
+        "type": "breakfast",
+        "recipe": "ekmek kızartıyon la\n"
+    },
+    {
+        "id": "1756213316797",
+        "name": "Tost Pizza",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756223586540",
+        "name": "türlü",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "recipe_1756211812110_0.14586159899413553",
+        "name": "yoğurtlu köfte",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756223273090",
+        "name": "yoğurtlu makarna",
+        "type": "main",
+        "recipe": ""
+    },
+    {
+        "id": "1756213277112",
+        "name": "Yumurtalı Ekmek",
+        "type": "breakfast",
+        "recipe": ""
+    },
+    {
+        "id": "1756213479109",
+        "name": "Yumurtalı Patates",
+        "type": "breakfast",
+        "recipe": ""
+    }
+]

@@ -3,12 +3,16 @@
 import { Edit, Plus } from 'lucide-react';
 import { useRef, useEffect, useCallback } from 'react';
 
+import { Id } from '../convex/_generated/dataModel';
+
 interface Meal {
-  id: string;
+  _id: Id<"meals">;
   name: string;
   type: 'breakfast' | 'main' | 'snack';
   date: string;
   notes?: string;
+  order: number;
+  recipe?: string;
 }
 
 interface MealModalProps {

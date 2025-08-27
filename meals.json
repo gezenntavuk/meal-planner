@@ -1,0 +1,174 @@
+[
+    {
+        "id": "1756208347565",
+        "name": "sucuk",
+        "type": "breakfast",
+        "date": "2025-08-25",
+        "notes": ""
+    },
+    {
+        "id": "1756208550121",
+        "name": "karnıyarık",
+        "type": "main",
+        "date": "2025-08-26",
+        "notes": "",
+        "recipe": "tarif\n"
+    },
+    {
+        "id": "1756209595745",
+        "name": "karnıyarık",
+        "type": "main",
+        "date": "2025-08-25"
+    },
+    {
+        "id": "1756209694855",
+        "name": "yoğurtlu köfte",
+        "type": "main",
+        "date": "2025-08-23",
+        "recipe": ""
+    },
+    {
+        "id": "1756209712271",
+        "name": "sarma",
+        "type": "main",
+        "date": "2025-08-23"
+    },
+    {
+        "id": "1756209714582",
+        "name": "yoğurtlu köfte",
+        "type": "main",
+        "date": "2025-08-24"
+    },
+    {
+        "id": "1756209715461",
+        "name": "sarma",
+        "type": "main",
+        "date": "2025-08-24"
+    },
+    {
+        "id": "1756209796943",
+        "name": "Fırında Patates",
+        "type": "breakfast",
+        "date": "2025-08-24"
+    },
+    {
+        "id": "1756212018271",
+        "name": "Tost",
+        "type": "breakfast",
+        "date": "2025-08-26",
+        "order": null,
+        "recipe": "ekmek kızartıyon la\n"
+    },
+    {
+        "id": "1756236847400",
+        "name": "Krep",
+        "type": "breakfast",
+        "date": "2025-08-27",
+        "order": 0,
+        "recipe": ""
+    },
+    {
+        "id": "1756236869753",
+        "name": "çokotop",
+        "type": "snack",
+        "date": "2025-08-27",
+        "order": 2,
+        "recipe": ""
+    },
+    {
+        "id": "1756236921484",
+        "name": "Patates Kızartması",
+        "type": "breakfast",
+        "date": "2025-08-28",
+        "order": 0,
+        "recipe": ""
+    },
+    {
+        "id": "1756236946825",
+        "name": "Pizza",
+        "type": "main",
+        "date": "2025-08-28",
+        "order": 1,
+        "recipe": ""
+    },
+    {
+        "id": "1756236982721",
+        "name": "Bazlama",
+        "type": "breakfast",
+        "date": "2025-08-29",
+        "order": 0,
+        "recipe": ""
+    },
+    {
+        "id": "1756237017057",
+        "name": "et güveç",
+        "type": "main",
+        "date": "2025-08-27",
+        "order": 3,
+        "recipe": ""
+    },
+    {
+        "id": "1756237036849",
+        "name": "kıymalı makarna",
+        "type": "main",
+        "date": "2025-08-29",
+        "order": 1,
+        "recipe": ""
+    },
+    {
+        "id": "1756237043009",
+        "name": "çoban salata",
+        "type": "main",
+        "date": "2025-08-29",
+        "order": 2,
+        "recipe": ""
+    },
+    {
+        "id": "1756237080057",
+        "name": "hünkar beğendi",
+        "type": "main",
+        "date": "2025-08-30",
+        "order": 0,
+        "recipe": ""
+    },
+    {
+        "id": "1756237119513",
+        "name": "çoban salata",
+        "type": "main",
+        "date": "2025-08-30",
+        "order": 1,
+        "recipe": ""
+    },
+    {
+        "id": "1756237146249",
+        "name": "menemen",
+        "type": "breakfast",
+        "date": "2025-08-30",
+        "order": 2,
+        "recipe": ""
+    },
+    {
+        "id": "1756237168041",
+        "name": "Tost",
+        "type": "breakfast",
+        "date": "2025-08-31",
+        "order": 0,
+        "recipe": "ekmek kızartıyon la\n"
+    },
+    {
+        "id": "1756237375065",
+        "name": "tavuklu pilav",
+        "type": "main",
+        "date": "2025-08-31",
+        "order": 1,
+        "recipe": ""
+    },
+    {
+        "id": "1756237379446",
+        "name": "cacık",
+        "type": "main",
+        "date": "2025-08-31",
+        "order": 2,
+        "recipe": ""
+    }
+]

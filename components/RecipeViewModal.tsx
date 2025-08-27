@@ -2,11 +2,14 @@
 
 import { Edit } from 'lucide-react';
 
+import { Id } from '../convex/_generated/dataModel';
+
 interface Recipe {
-  id: string;
+  _id: Id<"recipes">;
   name: string;
   type: 'breakfast' | 'main' | 'snack';
   recipe?: string;
+  favorite?: boolean;
 }
 
 interface RecipeViewModalProps {

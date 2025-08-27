@@ -4,12 +4,16 @@ import { useState, useEffect, useMemo } from 'react';
 import { format, startOfWeek, addDays, isSameDay } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { Plus, Edit, Trash2, Calendar, Utensils, Heart } from 'lucide-react';
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '../convex/_generated/api';
 import MealModal from '@/components/MealModal';
 import RecipeViewModal from '@/components/RecipeViewModal';
 import RecipeEditModal from '@/components/RecipeEditModal';
 
+import { Id } from '../convex/_generated/dataModel';
+
 interface Meal {
-  id: string;
+  _id: Id<"meals">;
   name: string;
   type: 'breakfast' | 'main' | 'snack';
   date: string;
@@ -19,16 +23,27 @@ interface Meal {
 }
 
 interface Recipe {
-  id: string;
+  _id: Id<"recipes">;
   name: string;
   type: 'breakfast' | 'main' | 'snack';
   recipe?: string; // Yemek tarifi
-  favorite?: boolean;
+  favorite?: boolean; // Favori işaretleme
 }
 
 export default function MealPlanner() {
-  const [meals, setMeals] = useState<Meal[]>([]);
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  // Convex hooks
+  const meals = useQuery(api.meals.getAll) || [];
+  const recipes = useQuery(api.recipes.getAll) || [];
+  const createMeal = useMutation(api.meals.create);
+  const updateMeal = useMutation(api.meals.update);
+  const deleteMeal = useMutation(api.meals.remove);
+  const createRecipe = useMutation(api.recipes.create);
+  const updateRecipe = useMutation(api.recipes.update);
+  const deleteRecipe = useMutation(api.recipes.remove);
+  const toggleFavorite = useMutation(api.recipes.toggleFavorite);
+  
+  // Seed fonksiyonları kaldırıldı
+
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [showAddModal, setShowAddModal] = useState(false);
   const [showRecipeModal, setShowRecipeModal] = useState(false);
@@ -38,7 +53,7 @@ export default function MealPlanner() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [editingMeal, setEditingMeal] = useState<Meal | null>(null);
   const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
-  const [draggedMeal, setDraggedMeal] = useState<Meal | null>(null);
+  const [draggedMeal, setDraggedMeal] = useState<any>(null);
   const [isDraggingToRecipes, setIsDraggingToRecipes] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -77,144 +92,9 @@ export default function MealPlanner() {
     ).join(' ');
   };
 
-  // Local storage'dan yemekleri ve tarifleri yükle
-  useEffect(() => {
-    try {
-      const savedMeals = localStorage.getItem('meals');
-      const savedRecipes = localStorage.getItem('recipes');
-      
-      if (savedMeals) {
-        const parsedMeals = JSON.parse(savedMeals);
-        // Eski lunch ve dinner türlerini main'e çevir
-        const migratedMeals = parsedMeals.map((meal: any) => ({
-          ...meal,
-          type: meal.type === 'lunch' || meal.type === 'dinner' ? 'main' : meal.type
-        }));
-        setMeals(migratedMeals);
-        // Güncellenmiş veriyi localStorage'a kaydet
-        localStorage.setItem('meals', JSON.stringify(migratedMeals));
-      } else {
-        // İlk kez açıldığında örnek veriler ekle
-        const sampleMeals: Meal[] = [
-          {
-            id: '1',
-            name: 'Sucuk',
-            type: 'breakfast',
-            date: format(new Date(), 'yyyy-MM-dd'),
-            notes: 'Kahvaltıda sucuk yedim',
-            order: 0
-          },
-          {
-            id: '2',
-            name: 'Mercimek Çorbası',
-            type: 'main',
-            date: format(new Date(), 'yyyy-MM-dd'),
-            notes: 'Vejetaryen',
-            order: 1
-          }
-        ];
-        setMeals(sampleMeals);
-        localStorage.setItem('meals', JSON.stringify(sampleMeals));
-      }
+  // Otomatik örnek veri yükleme kaldırıldı - artık sadece seed butonları kullanılacak
 
-      if (savedRecipes) {
-        const parsedRecipes = JSON.parse(savedRecipes);
-        // Eski lunch ve dinner türlerini main'e çevir
-        const migratedRecipes = parsedRecipes.map((recipe: any) => ({
-          ...recipe,
-          type: recipe.type === 'lunch' || recipe.type === 'dinner' ? 'main' : recipe.type
-        }));
-        setRecipes(migratedRecipes);
-        // Güncellenmiş veriyi localStorage'a kaydet
-        localStorage.setItem('recipes', JSON.stringify(migratedRecipes));
-      } else {
-        // İlk kez açıldığında örnek tarifler ekle
-        const sampleRecipes: Recipe[] = [
-          {
-            id: 'r1',
-            name: 'Sucuk',
-            type: 'breakfast',
-            recipe: 'Sucuk kızartma tarifi...'
-          },
-          {
-            id: 'r2',
-            name: 'Mercimek Çorbası',
-            type: 'main',
-            recipe: 'Mercimek çorbası tarifi...'
-          },
-          {
-            id: 'r3',
-            name: 'Tavuk Sote',
-            type: 'main',
-            recipe: 'Tavuk sote tarifi...'
-          },
-          {
-            id: 'r4',
-            name: 'Meyve Salatası',
-            type: 'snack',
-            recipe: 'Meyve salatası tarifi...'
-          }
-        ];
-        setRecipes(sampleRecipes);
-        localStorage.setItem('recipes', JSON.stringify(sampleRecipes));
-      }
-    } catch (error) {
-      console.error('Local storage\'dan veri yüklenirken hata:', error);
-      // Hata durumunda boş array ile başla
-      setMeals([]);
-      setRecipes([]);
-    }
-  }, []);
-
-  // Yemekleri ve tarifleri local storage'a kaydet
-  useEffect(() => {
-    try {
-      localStorage.setItem('meals', JSON.stringify(meals));
-    } catch (error) {
-      console.error('Local storage\'a veri kaydedilirken hata:', error);
-    }
-  }, [meals]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('recipes', JSON.stringify(recipes));
-    } catch (error) {
-      console.error('Local storage\'a tarif verisi kaydedilirken hata:', error);
-    }
-  }, [recipes]);
-
-  // Yemekler değiştiğinde otomatik senkronizasyon
-  useEffect(() => {
-    if (meals.length > 0) {
-      const uniqueMeals: { [key: string]: Meal } = {};
-      
-      meals.forEach(meal => {
-        if (!uniqueMeals[meal.name]) {
-          uniqueMeals[meal.name] = meal;
-        }
-      });
-
-      const existingRecipeNames = recipes.map(r => r.name);
-      const newRecipes: Recipe[] = [];
-
-      Object.values(uniqueMeals).forEach(meal => {
-        if (!existingRecipeNames.includes(meal.name)) {
-          newRecipes.push({
-            id: `recipe_${Date.now()}_${Math.random()}`,
-            name: meal.name,
-            type: meal.type,
-            recipe: meal.recipe || ''
-          });
-        }
-      });
-
-      if (newRecipes.length > 0) {
-        setRecipes(prev => [...prev, ...newRecipes]);
-      }
-    }
-  }, [meals]);
-
-  const handleSaveMeal = () => {
+  const handleSaveMeal = async () => {
     if (!formData.name) return;
 
     if (editingMeal) {
@@ -223,18 +103,26 @@ export default function MealPlanner() {
       const newMealName = formData.name;
       
       // Yemeği güncelle
-      setMeals(meals.map(meal => 
-        meal.id === editingMeal.id 
-          ? { ...meal, ...formData }
-          : meal
-      ));
+      await updateMeal({
+        id: editingMeal._id,
+        name: formData.name,
+        type: formData.type,
+        date: formData.date,
+        notes: formData.recipe,
+        order: editingMeal.order,
+        recipe: formData.recipe
+      });
       
       // Aşağıdaki aynı isimli tarifi de güncelle
-      setRecipes(recipes.map(recipe => 
-        recipe.name === oldMealName 
-          ? { ...recipe, name: newMealName, type: formData.type, recipe: formData.recipe }
-          : recipe
-      ));
+      const matchingRecipe = recipes.find(recipe => recipe.name === oldMealName);
+      if (matchingRecipe) {
+        await updateRecipe({
+          id: matchingRecipe._id,
+          name: newMealName,
+          type: formData.type,
+          recipe: formData.recipe
+        });
+      }
       
       setEditingMeal(null);
     } else if (formData.date) {
@@ -242,24 +130,20 @@ export default function MealPlanner() {
       const dayMeals = meals.filter(meal => meal.date === formData.date);
       const maxOrder = dayMeals.length > 0 ? Math.max(...dayMeals.map(m => m.order)) : -1;
       
-      const newMeal: Meal = {
-        id: Date.now().toString(),
+      await createMeal({
         name: formData.name,
         type: formData.type,
         date: formData.date,
         order: maxOrder + 1,
         recipe: formData.recipe
-      };
-      setMeals([...meals, newMeal]);
+      });
     } else {
       // Yeni tarif ekleme (tarih yoksa)
-      const newRecipe: Recipe = {
-        id: Date.now().toString(),
+      await createRecipe({
         name: formData.name,
         type: formData.type,
         recipe: formData.recipe
-      };
-      setRecipes([...recipes, newRecipe]);
+      });
     }
 
     // Sadece name, date ve recipe'yi sıfırla, type'ı koru
@@ -267,7 +151,7 @@ export default function MealPlanner() {
     setShowAddModal(false);
   };
 
-  const handleSaveRecipe = () => {
+  const handleSaveRecipe = async () => {
     if (!formData.name || !editingRecipe) return;
 
     // Tarif düzenleme modu
@@ -275,34 +159,38 @@ export default function MealPlanner() {
     const newRecipeName = formData.name;
     
     // Tarifi güncelle
-    setRecipes(recipes.map(recipe => 
-      recipe.id === editingRecipe.id 
-        ? { ...recipe, name: formData.name, type: formData.type, recipe: formData.recipe }
-        : recipe
-    ));
+    await updateRecipe({
+      id: editingRecipe._id,
+      name: formData.name,
+      type: formData.type,
+      recipe: formData.recipe
+    });
     
     // Yukarıdaki aynı isimli yemekleri de güncelle
-    setMeals(meals.map(meal => 
-      meal.name === oldRecipeName 
-        ? { ...meal, name: newRecipeName, type: formData.type, recipe: formData.recipe }
-        : meal
-    ));
+    const matchingMeals = meals.filter(meal => meal.name === oldRecipeName);
+    for (const meal of matchingMeals) {
+      await updateMeal({
+        id: meal._id,
+        name: newRecipeName,
+        type: formData.type,
+        date: meal.date,
+        notes: meal.notes,
+        order: meal.order,
+        recipe: formData.recipe
+      });
+    }
     
     setEditingRecipe(null);
     setFormData({ name: '', type: formData.type, date: '', recipe: '' });
     setShowRecipeEditModal(false);
   };
 
-  const toggleFavorite = (recipeId: string) => {
-    setRecipes(recipes.map(recipe => 
-      recipe.id === recipeId 
-        ? { ...recipe, favorite: !recipe.favorite }
-        : recipe
-    ));
+  const handleToggleFavorite = async (recipeId: Id<"recipes">) => {
+    await toggleFavorite({ id: recipeId });
   };
 
-  const handleDeleteMeal = (id: string) => {
-    setMeals(meals.filter(meal => meal.id !== id));
+  const handleDeleteMeal = async (id: Id<"meals">) => {
+    await deleteMeal({ id });
   };
 
   const openEditModal = (meal: Meal) => {
@@ -366,8 +254,8 @@ export default function MealPlanner() {
 
   const clearAllMeals = () => {
     if (confirm('Tüm yemek verilerini silmek istediğinizden emin misiniz?')) {
-      setMeals([]);
-      localStorage.removeItem('meals');
+      // Convex'te toplu silme işlemi için ayrı bir mutation gerekir
+      console.log('Clear all meals - Convex\'te henüz desteklenmiyor');
     }
   };
 
@@ -388,13 +276,9 @@ export default function MealPlanner() {
     return mealTypes.find(t => t.value === type);
   };
 
-  // Tarifleri favori ve alfabetik sırala
+  // Tarifleri alfabetik sırala (favorite özelliği Convex'te yok)
   const getSortedRecipes = () => {
     return recipes.sort((a, b) => {
-      // Önce favori durumuna göre sırala (favoriler üstte)
-      if (a.favorite && !b.favorite) return -1;
-      if (!a.favorite && b.favorite) return 1;
-      // Sonra alfabetik sırala
       return a.name.localeCompare(b.name);
     });
   };
@@ -410,7 +294,7 @@ export default function MealPlanner() {
     } else {
       e.dataTransfer.effectAllowed = 'move';
     }
-    e.dataTransfer.setData('text/html', meal.id);
+    e.dataTransfer.setData('text/html', meal._id);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -434,22 +318,24 @@ export default function MealPlanner() {
         
         if (e.altKey || !draggedMeal.date) {
           // Alt tuşu basılıysa veya tariflerden sürükleniyorsa yemeği kopyala
-          const newMeal: Meal = {
-            id: Date.now().toString(),
+          createMeal({
             name: draggedMeal.name,
             type: draggedMeal.type,
             date: targetDate,
             order: maxOrder + 1,
             recipe: draggedMeal.recipe
-          };
-          setMeals([...meals, newMeal]);
+          });
         } else {
           // Normal sürükleme - yemeği taşı
-          setMeals(meals.map(meal => 
-            meal.id === draggedMeal.id 
-              ? { ...meal, date: targetDate, order: maxOrder + 1 }
-              : meal
-          ));
+          updateMeal({
+            id: draggedMeal._id,
+            name: draggedMeal.name,
+            type: draggedMeal.type,
+            date: targetDate,
+            notes: draggedMeal.notes,
+            order: maxOrder + 1,
+            recipe: draggedMeal.recipe
+          });
         }
       }
     }
@@ -473,6 +359,8 @@ export default function MealPlanner() {
             Haftalık Yemek Planlayıcısı
           </h1>
           <p className="text-gray-600">Bu hafta hangi yemekleri yiyeceğinizi planlayın</p>
+          
+
         </div>
 
         {/* Week Navigation */}
@@ -531,11 +419,11 @@ export default function MealPlanner() {
               <div className="space-y-2 min-h-[100px]">
                 {getMealsForDay(day.fullDate).map((meal) => {
                   const typeInfo = getMealTypeInfo(meal.type);
-                  const isDragging = draggedMeal?.id === meal.id;
+                  const isDragging = draggedMeal?._id === meal._id;
                   return (
                     <div 
-                      key={meal.id} 
-                      data-meal-id={meal.id}
+                      key={meal._id} 
+                      data-meal-id={meal._id}
                       className={`rounded-lg p-3 cursor-move transition-all duration-200 ${
                         isToday ? 'bg-green-50 border border-green-200' : 'bg-gray-50'
                       } ${
@@ -563,7 +451,7 @@ export default function MealPlanner() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDeleteMeal(meal.id);
+                              handleDeleteMeal(meal._id);
                             }}
                             className="text-red-600 hover:text-red-800 cursor-pointer hover:scale-110 transition-colors"
                           >
@@ -577,9 +465,9 @@ export default function MealPlanner() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              // Yemekten Recipe objesi oluştur
-                              const recipeData: Recipe = {
-                                id: meal.id,
+                              // Yemekten Recipe objesi oluştur - geçici olarak
+                              const recipeData = {
+                                _id: "temp" as Id<"recipes">,
                                 name: meal.name,
                                 type: meal.type,
                                 recipe: meal.recipe
@@ -637,7 +525,7 @@ export default function MealPlanner() {
               setIsDraggingToRecipes(false);
               if (draggedMeal && draggedMeal.date) {
                 // Gün kartından sürüklenen yemeği sil
-                setMeals(meals.filter(meal => meal.id !== draggedMeal.id));
+                deleteMeal({ id: draggedMeal._id });
               }
               setDraggedMeal(null);
             }}
@@ -671,13 +559,11 @@ export default function MealPlanner() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && breakfastSearch.trim().length > 0 && !recipes.some(recipe => recipe.name.toLowerCase() === breakfastSearch.trim().toLowerCase())) {
                       const trimmedSearch = breakfastSearch.trim();
-                      const newRecipe: Recipe = {
-                        id: Date.now().toString(),
+                      createRecipe({
                         name: trimmedSearch,
                         type: 'breakfast',
                         recipe: ''
-                      };
-                      setRecipes([...recipes, newRecipe]);
+                      });
                       setBreakfastSearch('');
                     }
                   }}
@@ -711,12 +597,12 @@ export default function MealPlanner() {
                     const typeInfo = getMealTypeInfo(recipe.type);
                     return (
                       <div
-                        key={recipe.id}
+                        key={recipe._id}
                         className="bg-white rounded-lg shadow-md p-3 cursor-move hover:shadow-lg transition-shadow border border-orange-200"
                         draggable
                         onDragStart={(e) => {
-                          const newMeal: Meal = {
-                            id: Date.now().toString(),
+                          const newMeal = {
+                            _id: recipe._id,
                             name: recipe.name,
                             type: recipe.type,
                             date: '',
@@ -725,7 +611,7 @@ export default function MealPlanner() {
                           };
                           setDraggedMeal(newMeal);
                           e.dataTransfer.effectAllowed = 'copy';
-                          e.dataTransfer.setData('text/html', newMeal.id);
+                          e.dataTransfer.setData('text/html', recipe._id);
                         }}
                         onDragEnd={handleDragEnd}
                       >
@@ -735,7 +621,7 @@ export default function MealPlanner() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                toggleFavorite(recipe.id);
+                                handleToggleFavorite(recipe._id);
                               }}
                               className={`transition-colors cursor-pointer hover:scale-110 ${recipe.favorite ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
                               title={recipe.favorite ? 'Favorilerden çıkar' : 'Favorilere ekle'}
@@ -769,7 +655,7 @@ export default function MealPlanner() {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if (confirm('Bu tarifi silmek istediğinizden emin misiniz?')) {
-                                  setRecipes(recipes.filter(r => r.id !== recipe.id));
+                                  deleteRecipe({ id: recipe._id });
                                 }
                               }}
                               className="text-red-600 hover:text-red-800 transition-colors cursor-pointer hover:scale-110"
@@ -817,13 +703,11 @@ export default function MealPlanner() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && mainSearch.trim().length > 0 && !recipes.some(recipe => recipe.name.toLowerCase() === mainSearch.trim().toLowerCase())) {
                       const trimmedSearch = mainSearch.trim();
-                      const newRecipe: Recipe = {
-                        id: Date.now().toString(),
+                      createRecipe({
                         name: trimmedSearch,
                         type: 'main',
                         recipe: ''
-                      };
-                      setRecipes([...recipes, newRecipe]);
+                      });
                       setMainSearch('');
                     }
                   }}
@@ -857,12 +741,12 @@ export default function MealPlanner() {
                     const typeInfo = getMealTypeInfo(recipe.type);
                     return (
                       <div
-                        key={recipe.id}
+                        key={recipe._id}
                         className="bg-white rounded-lg shadow-md p-3 cursor-move hover:shadow-lg transition-shadow border border-green-200"
                         draggable
                         onDragStart={(e) => {
-                          const newMeal: Meal = {
-                            id: Date.now().toString(),
+                          const newMeal = {
+                            _id: recipe._id,
                             name: recipe.name,
                             type: recipe.type,
                             date: '',
@@ -871,7 +755,7 @@ export default function MealPlanner() {
                           };
                           setDraggedMeal(newMeal);
                           e.dataTransfer.effectAllowed = 'copy';
-                          e.dataTransfer.setData('text/html', newMeal.id);
+                          e.dataTransfer.setData('text/html', recipe._id);
                         }}
                         onDragEnd={handleDragEnd}
                       >
@@ -881,7 +765,7 @@ export default function MealPlanner() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                toggleFavorite(recipe.id);
+                                handleToggleFavorite(recipe._id);
                               }}
                               className={`transition-colors cursor-pointer hover:scale-110 ${recipe.favorite ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
                               title={recipe.favorite ? 'Favorilerden çıkar' : 'Favorilere ekle'}
@@ -915,7 +799,7 @@ export default function MealPlanner() {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if (confirm('Bu tarifi silmek istediğinizden emin misiniz?')) {
-                                  setRecipes(recipes.filter(r => r.id !== recipe.id));
+                                  deleteRecipe({ id: recipe._id });
                                 }
                               }}
                               className="text-red-600 hover:text-red-800 transition-colors cursor-pointer hover:scale-110"
@@ -963,13 +847,11 @@ export default function MealPlanner() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && snackSearch.trim().length > 0 && !recipes.some(recipe => recipe.name.toLowerCase() === snackSearch.trim().toLowerCase())) {
                       const trimmedSearch = snackSearch.trim();
-                      const newRecipe: Recipe = {
-                        id: Date.now().toString(),
+                      createRecipe({
                         name: trimmedSearch,
                         type: 'snack',
                         recipe: ''
-                      };
-                      setRecipes([...recipes, newRecipe]);
+                      });
                       setSnackSearch('');
                     }
                   }}
@@ -1003,12 +885,12 @@ export default function MealPlanner() {
                     const typeInfo = getMealTypeInfo(recipe.type);
                     return (
                       <div
-                        key={recipe.id}
+                        key={recipe._id}
                         className="bg-white rounded-lg shadow-md p-3 cursor-move hover:shadow-lg transition-shadow border border-purple-200"
                         draggable
                         onDragStart={(e) => {
-                          const newMeal: Meal = {
-                            id: Date.now().toString(),
+                          const newMeal = {
+                            _id: recipe._id,
                             name: recipe.name,
                             type: recipe.type,
                             date: '',
@@ -1017,7 +899,7 @@ export default function MealPlanner() {
                           };
                           setDraggedMeal(newMeal);
                           e.dataTransfer.effectAllowed = 'copy';
-                          e.dataTransfer.setData('text/html', newMeal.id);
+                          e.dataTransfer.setData('text/html', recipe._id);
                         }}
                         onDragEnd={handleDragEnd}
                       >
@@ -1027,7 +909,7 @@ export default function MealPlanner() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                toggleFavorite(recipe.id);
+                                handleToggleFavorite(recipe._id);
                               }}
                               className={`transition-colors cursor-pointer hover:scale-110 ${recipe.favorite ? 'text-red-500' : 'text-gray-400 hover:text-red-500'}`}
                               title={recipe.favorite ? 'Favorilerden çıkar' : 'Favorilere ekle'}
@@ -1061,7 +943,7 @@ export default function MealPlanner() {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if (confirm('Bu tarifi silmek istediğinizden emin misiniz?')) {
-                                  setRecipes(recipes.filter(r => r.id !== recipe.id));
+                                  deleteRecipe({ id: recipe._id });
                                 }
                               }}
                               className="text-red-600 hover:text-red-800 transition-colors cursor-pointer hover:scale-110"
