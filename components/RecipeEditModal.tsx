@@ -1,23 +1,21 @@
 'use client';
 
 import { Edit, Plus } from 'lucide-react';
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect } from 'react';
 
-interface Meal {
+interface Recipe {
   id: string;
   name: string;
   type: 'breakfast' | 'main' | 'snack';
-  date: string;
-  notes?: string;
+  recipe?: string;
 }
 
-interface MealModalProps {
+interface RecipeEditModalProps {
   showModal: boolean;
-  editingMeal: Meal | null;
+  editingRecipe: Recipe | null;
   formData: {
     name: string;
-    type: Meal['type'];
-    date: string;
+    type: Recipe['type'];
     recipe: string;
   };
   onClose: () => void;
@@ -25,14 +23,14 @@ interface MealModalProps {
   onFormChange: (field: string, value: string) => void;
 }
 
-export default function MealModal({
+export default function RecipeEditModal({
   showModal,
-  editingMeal,
+  editingRecipe,
   formData,
   onClose,
   onSave,
   onFormChange
-}: MealModalProps) {
+}: RecipeEditModalProps) {
   const nameInputRef = useRef<HTMLInputElement>(null);
   
   const mealTypes = [
@@ -83,7 +81,7 @@ export default function MealModal({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <h2 className="text-xl font-semibold mb-4 text-black">
-          {editingMeal ? 'Yemek Düzenle' : 'Yeni Yemek Ekle'}
+          Tarif Düzenle
         </h2>
         
         <div className="space-y-4">
@@ -130,23 +128,6 @@ export default function MealModal({
 
           <div>
             <label className="block text-sm font-medium text-black mb-1">
-              Tarih
-            </label>
-            <input
-              type="date"
-              value={formData.date}
-              onChange={(e) => onFormChange('date', e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !formData.recipe) {
-                  onSave();
-                }
-              }}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-0 ${getFocusColor(formData.type)}`}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-black mb-1">
               Tarif (İsteğe bağlı)
             </label>
             <textarea
@@ -157,8 +138,6 @@ export default function MealModal({
               placeholder="Yemeğin tarifini buraya yazabilirsiniz..."
             />
           </div>
-
-
         </div>
 
         <div className="flex gap-3 mt-6">
@@ -172,17 +151,8 @@ export default function MealModal({
             onClick={onSave}
             className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center justify-center gap-2 cursor-pointer transition-colors"
           >
-            {editingMeal ? (
-              <>
-                <Edit size={16} />
-                Güncelle
-              </>
-            ) : (
-              <>
-                <Plus size={16} />
-                Ekle
-              </>
-            )}
+            <Edit size={16} />
+            Düzenle
           </button>
         </div>
       </div>
