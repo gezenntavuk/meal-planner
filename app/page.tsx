@@ -371,7 +371,7 @@ export default function MealPlanner() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
-      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-full">
         {/* Header */}
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2 sm:gap-3">
@@ -385,7 +385,7 @@ export default function MealPlanner() {
         </div>
 
         {/* Week Navigation */}
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 gap-2 sm:gap-0">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 gap-2 sm:gap-0 overflow-hidden">
           <button
             onClick={() => setCurrentWeek(addDays(currentWeek, -7))}
             className="px-3 sm:px-4 py-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow text-black cursor-pointer text-sm sm:text-base"
@@ -393,7 +393,12 @@ export default function MealPlanner() {
             ← Önceki Hafta
           </button>
           <div className="text-sm sm:text-lg font-semibold text-gray-700 text-center">
-            {format(startOfWeek(currentWeek, { weekStartsOn: 1 }), 'd MMMM yyyy', { locale: tr })} - {format(addDays(startOfWeek(currentWeek, { weekStartsOn: 1 }), 6), 'd MMMM yyyy', { locale: tr })}
+            <span className="hidden sm:inline">
+              {format(startOfWeek(currentWeek, { weekStartsOn: 1 }), 'd MMMM yyyy', { locale: tr })} - {format(addDays(startOfWeek(currentWeek, { weekStartsOn: 1 }), 6), 'd MMMM yyyy', { locale: tr })}
+            </span>
+            <span className="sm:hidden">
+              {format(startOfWeek(currentWeek, { weekStartsOn: 1 }), 'd MMM', { locale: tr })} - {format(addDays(startOfWeek(currentWeek, { weekStartsOn: 1 }), 6), 'd MMM', { locale: tr })}
+            </span>
           </div>
           <button
             onClick={() => setCurrentWeek(addDays(currentWeek, 7))}
@@ -406,13 +411,13 @@ export default function MealPlanner() {
 
 
         {/* Weekly Calendar */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-2 sm:gap-4">
+        <div className="flex overflow-x-auto gap-2 sm:gap-4 pb-2 sm:pb-4 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-7 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           {weekDays.map((day) => {
             const isToday = day.fullDate === format(new Date(), 'yyyy-MM-dd');
             return (
               <div 
                 key={day.fullDate} 
-                className={`rounded-lg shadow-md p-2 sm:p-4 transition-all duration-200 ${
+                className={`rounded-lg shadow-md p-2 sm:p-4 transition-all duration-200 flex-shrink-0 w-64 sm:w-auto ${
                   isToday 
                     ? 'bg-gradient-to-br from-green-100 to-blue-100 border-2 border-green-400 shadow-lg' 
                     : 'bg-white'
@@ -531,7 +536,7 @@ export default function MealPlanner() {
           </div>
           
           <div 
-            className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 transition-all duration-200 ${
+            className={`flex overflow-x-auto gap-4 sm:gap-6 pb-2 sm:pb-4 lg:grid lg:grid-cols-3 transition-all duration-200 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 ${
               isDraggingToRecipes ? 'bg-red-50 border-2 border-red-200 rounded-lg p-2' : ''
             }`}
             onDragOver={(e) => {
@@ -553,7 +558,7 @@ export default function MealPlanner() {
             }}
           >
             {/* Kahvaltı Kolonu */}
-            <div className="bg-orange-50 rounded-lg p-3 sm:p-4 border border-orange-200">
+            <div className="bg-orange-50 rounded-lg p-3 sm:p-4 border border-orange-200 flex-shrink-0 w-80 sm:w-auto">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <div className="flex items-center gap-1 sm:gap-2">
                   <span className="text-xl sm:text-2xl">🌅</span>
@@ -610,7 +615,7 @@ export default function MealPlanner() {
                 
 
               </div>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                              <div className="grid grid-cols-1 gap-2 sm:gap-3">
                 {getFilteredRecipes('breakfast')
                   .filter(recipe => 
                     breakfastSearch === '' || 
@@ -703,7 +708,7 @@ export default function MealPlanner() {
             </div>
 
             {/* Ana Yemek Kolonu */}
-            <div className="bg-green-50 rounded-lg p-3 sm:p-4 border border-green-200">
+            <div className="bg-green-50 rounded-lg p-3 sm:p-4 border border-green-200 flex-shrink-0 w-80 sm:w-auto">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <div className="flex items-center gap-1 sm:gap-2">
                   <span className="text-xl sm:text-2xl">🍽️</span>
@@ -760,7 +765,7 @@ export default function MealPlanner() {
                 
 
               </div>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                              <div className="grid grid-cols-1 gap-2 sm:gap-3">
                 {getFilteredRecipes('main')
                   .filter(recipe => 
                     mainSearch === '' || 
@@ -853,7 +858,7 @@ export default function MealPlanner() {
             </div>
 
             {/* Ara Öğün Kolonu */}
-            <div className="bg-purple-50 rounded-lg p-3 sm:p-4 border border-purple-200">
+            <div className="bg-purple-50 rounded-lg p-3 sm:p-4 border border-purple-200 flex-shrink-0 w-80 sm:w-auto">
               <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <div className="flex items-center gap-1 sm:gap-2">
                   <span className="text-xl sm:text-2xl">🍎</span>
@@ -910,7 +915,7 @@ export default function MealPlanner() {
                 
 
               </div>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                              <div className="grid grid-cols-1 gap-2 sm:gap-3">
                 {getFilteredRecipes('snack')
                   .filter(recipe => 
                     snackSearch === '' || 
